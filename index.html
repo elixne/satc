@@ -123,6 +123,59 @@ footer{text-align:right;font-size:11px;color:var(--muted);margin-top:18px;letter
  .pass{flex-direction:column}.stub{width:auto;border-left:none;border-top:2px dashed var(--ink)}
  h1{font-size:28px}.cal .c{min-height:48px;font-size:9px}
 }
+ /* 📱 Optimización para celular */
+@media (max-width:760px){
+  body{padding:0}
+  .wrap{flex-direction:column-reverse;box-shadow:none}
+  .page{padding:16px 14px 20px;border:none}
+
+  /* tabs de propuestas: arriba y horizontales */
+  .tabs{flex-direction:row;width:100%;overflow-x:auto;scrollbar-width:none}
+  .tabs button{writing-mode:horizontal-tb;transform:none;min-height:0;flex:1 0 auto;padding:10px 14px;font-size:11px;
+    border-bottom:none;border-right:1px solid rgba(0,0,0,.08);white-space:nowrap}
+  .tabs button.active{width:auto;box-shadow:inset 0 -3px 0 var(--ink)}
+
+  /* botones de páginas: en una fila que se desliza y se queda pegada arriba */
+  nav{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;position:sticky;top:0;z-index:5;
+    background:var(--paper);margin:0 -14px 14px;padding:8px 14px}
+  nav button{flex-shrink:0}
+  nav::-webkit-scrollbar,.tabs::-webkit-scrollbar{display:none}
+
+  /* encabezado y boarding pass */
+  h1{font-size:26px}
+  .meta{font-size:12px;gap:6px}
+  .pass{flex-direction:column}
+  .stub{width:auto;border-left:none;border-top:2px dashed var(--ink)}
+  .big{font-size:16px}
+  .plane svg{width:30px;height:30px}
+  .pass-row{gap:10px}
+  .strip{grid-template-columns:repeat(3,1fr)}
+
+  /* tarjetas y fotos */
+  .grid,.grid2,.stats{grid-template-columns:1fr}
+  .photos,.photos.two{grid-template-columns:repeat(2,1fr);gap:12px;margin:4px 0 12px}
+  .photos .polaroid:last-child:nth-child(odd){grid-column:1/-1;width:60%;justify-self:center}
+  .polaroid p{font-size:11px}
+
+  /* calendario más compacto */
+  .cal{gap:3px}
+  .cal .c{min-height:44px;padding:3px;font-size:8px;line-height:1.2;word-break:break-word;border-radius:6px}
+  .cal .c .n{font-size:12px}
+
+  /* itinerario: la tabla se vuelve tarjetitas */
+  table.it,.it tbody,.it tr,.it td{display:block;width:100%}
+  table.it{border:none;background:transparent}
+  .it tr:first-child{display:none}
+  .it tr{background:var(--card);border:1.5px solid var(--pink);border-radius:10px;margin-bottom:8px;padding:8px 10px}
+  .it td{border:none;padding:2px 0}
+  .it td:first-child{display:inline-block;width:auto;background:var(--pink);border-radius:8px;padding:0 8px;margin-right:6px}
+  .it td:nth-child(2){display:inline-block;width:auto;font-weight:600}
+  .it td:nth-child(3){color:var(--muted);font-size:11.5px}
+
+  /* timeline y footer */
+  .tl .s .amt{float:none;display:inline-block;margin-bottom:4px}
+  footer{text-align:center}
+}
 </style>
 </head>
 <body>

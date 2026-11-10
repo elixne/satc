@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trip Planner · 2028</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#ebe7e0;--paper:#f5f2ea;--card:#fdfbf6;--ink:#1d1d1d;--muted:#6f6a60;--line:#d9d4c7;
+--yellow:#e8df6a;--pink:#efcbdc;--blue:#c3d6ec;--green:#d3e2c1;--peach:#f6d7b8;--lav:#dcd3ee;--sand:#ebe5d6}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Poppins',system-ui,sans-serif;background:var(--bg);color:var(--ink);padding:28px 12px}
+.wrap{max-width:940px;margin:0 auto;display:flex;box-shadow:0 10px 30px rgba(0,0,0,.08)}
+.page{flex:1;background:var(--paper);padding:28px 30px 24px;border:1px solid var(--line);min-width:0}
+/* side tabs = plans */
+.tabs{display:flex;flex-direction:column;width:50px}
+.tabs button{flex:1;min-height:90px;border:none;border-bottom:1px solid rgba(0,0,0,.08);cursor:pointer;font:700 12px 'Poppins';letter-spacing:1.5px;
+ writing-mode:vertical-rl;transform:rotate(180deg);color:var(--ink);transition:width .15s}
+.tabs button.active{width:60px;box-shadow:-2px 0 6px rgba(0,0,0,.15)}
+.tabs button:hover{filter:brightness(.96)}
+/* nav */
+nav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px}
+nav button{font:500 12px 'Poppins';padding:5px 13px;border-radius:20px;background:var(--sand);border:1px solid var(--line);cursor:pointer;color:var(--ink)}
+nav button.on,nav button:hover{background:var(--ink);color:#fff}
+header.top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:18px}
+h1{font-size:34px;font-weight:800;letter-spacing:-1px;display:flex;align-items:center;gap:10px}
+h1 .hl{background:linear-gradient(transparent 62%,var(--pink) 62%)}
+.meta{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:500;flex-wrap:wrap}
+.pill{background:var(--yellow);padding:5px 16px;border-radius:20px;font-weight:600}
+.datebox{background:#fff;border:1px solid var(--line);border-radius:18px;padding:6px 18px;font-weight:600}
+/* pass */
+.pass{display:flex;border:1.5px solid var(--ink);border-radius:14px;overflow:hidden;background:var(--card);margin-bottom:14px}
+.pass-main{flex:1;padding:16px 20px}
+.pass-title{font-weight:700;letter-spacing:2px;font-size:13px;margin-bottom:14px}
+.route{display:grid;grid-template-columns:1fr auto 1fr;align-items:end;gap:10px;margin-bottom:14px}
+.lbl{font-size:10px;font-weight:600;letter-spacing:1px;color:var(--muted)}
+.big{font-size:21px;font-weight:700;border-bottom:1.5px solid var(--ink);padding-bottom:2px}
+.plane svg{width:42px;height:42px;fill:#e9b9cf;transform:rotate(-15deg)}
+.pass-row{display:flex;flex-wrap:wrap;gap:16px;font-size:11px;font-weight:600}
+.pass-row b{font-weight:500;border-bottom:1px solid var(--ink);padding:0 8px;margin-left:4px}
+.stub{width:210px;background:var(--blue);border-left:2px dashed var(--ink);padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.stub .names{font-size:13px;font-weight:600;border-bottom:1px solid var(--ink);padding-bottom:4px}
+.count{background:#fff;border-radius:8px;padding:6px;text-align:center;font-size:22px;font-weight:800}
+.count small{display:block;font-size:10px;font-weight:500;color:var(--muted)}
+.barcode{height:34px;background:repeating-linear-gradient(90deg,#111 0 2px,transparent 2px 4px,#111 4px 5px,transparent 5px 8px,#111 8px 11px,transparent 11px 12px);margin-top:auto}
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(95px,1fr));gap:8px;margin-bottom:22px}
+.day{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 4px;text-align:center}
+.day .c{font-size:13px;font-weight:600}.day .i{font-size:22px;margin:3px 0}.day .d{font-size:11px;color:var(--muted)}
+/* sections */
+section.view{display:none;animation:fade .25s}
+section.view.show{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
+h2.sec{font-size:20px;font-weight:700;margin:4px 0 12px;display:flex;align-items:center;gap:8px}
+h2.sec span{background:linear-gradient(transparent 60%,var(--yellow) 60%)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:14px}
+.card{background:var(--card);border-radius:12px;overflow:hidden;border:1.5px solid}
+.card h3{font-size:14px;font-weight:600;padding:8px 12px}
+.card .body{padding:8px 12px 12px;font-size:12.5px;line-height:1.55}
+.y{border-color:var(--yellow)}.y h3{background:var(--yellow)}
+.b{border-color:var(--blue)}.b h3{background:var(--blue)}
+.p{border-color:var(--pink)}.p h3{background:var(--pink)}
+.g{border-color:var(--green)}.g h3{background:var(--green)}
+.line{font-size:12.5px;border-bottom:1px solid var(--line);padding:7px 0;display:flex;justify-content:space-between;gap:8px}
+.line span:last-child{color:var(--muted);text-align:right}
+.note{background:var(--card);border:1.5px dashed var(--line);border-radius:12px;padding:14px 16px;font-size:13px;line-height:1.65;margin-bottom:14px}
+.note b{font-weight:600}
+.tag{display:inline-block;font-size:11px;font-weight:600;padding:2px 10px;border-radius:12px;background:var(--sand);margin:0 4px 4px 0}
+/* polaroids */
+.photos{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin:4px 8px 12px}
+.polaroid{background:#fff;padding:8px 8px 10px;box-shadow:0 3px 8px rgba(0,0,0,.12);cursor:pointer;transition:transform .2s}
+.polaroid:nth-child(3n+1){transform:rotate(-2deg)}.polaroid:nth-child(3n+2){transform:rotate(1.5deg)}.polaroid:nth-child(3n){transform:rotate(-1deg)}
+.polaroid:hover{transform:rotate(0) scale(1.03)}
+.ph{aspect-ratio:4/3;background:#ece4d3 radial-gradient(#b9ae98 1px,transparent 1.4px) 0 0/14px 14px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--muted);overflow:hidden}
+.ph img{width:100%;height:100%;object-fit:cover}
+.polaroid p{text-align:center;font-size:12px;font-weight:500;margin-top:6px}
+.cityblock{margin-bottom:18px}
+.cityblock h4{font-size:14px;font-weight:700;margin:0 8px 8px;display:flex;justify-content:space-between;flex-wrap:wrap}
+.cityblock h4 small{font-weight:500;color:var(--muted)}
+.photos.two{grid-template-columns:repeat(2,1fr);max-width:620px}
+/* calendar */
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-bottom:12px}
+.cal .h{font-size:11px;font-weight:600;text-align:center;color:var(--muted);padding-bottom:2px}
+.cal .c{background:var(--card);border:1px solid var(--line);border-radius:8px;min-height:62px;padding:5px 6px;font-size:10.5px}
+.cal .c .n{font-weight:700;font-size:14px}
+.cal .c.empty{background:transparent;border:none}
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+/* table */
+table.it{width:100%;border-collapse:collapse;font-size:12.5px;background:var(--card);border-radius:12px;overflow:hidden;border:1.5px solid var(--pink);margin-bottom:14px}
+.it th{background:var(--pink);text-align:left;padding:8px 10px;font-weight:600}
+.it td{padding:7px 10px;border-top:1px solid var(--line);vertical-align:top}
+.it td:first-child{white-space:nowrap;font-weight:600}
+/* checklists */
+ul.check{list-style:none}
+ul.check li{display:flex;align-items:center;gap:10px;font-size:12.5px;border-bottom:1px solid var(--line);padding:7px 0;cursor:pointer;user-select:none}
+ul.check li::before{content:"";width:13px;height:13px;border:1.5px solid var(--ink);border-radius:50%;flex-shrink:0}
+ul.check li.done{color:var(--muted);text-decoration:line-through}
+ul.check li.done::before{background:var(--ink);box-shadow:inset 0 0 0 2px var(--card)}
+ul.check li small{margin-left:auto;font-size:10px;color:var(--muted)}
+/* budget */
+.budget .row{display:flex;align-items:center;gap:8px;font-size:13px;padding:6px 0}
+.dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.budget input{margin-left:auto;width:90px;border:none;border-bottom:1px solid var(--ink);background:transparent;font:inherit;text-align:right;padding:2px}
+.budget input:focus{outline:none;border-color:#c77fa3}
+.total{border-top:1.5px solid var(--ink);margin-top:6px;padding-top:8px;font-weight:700;display:flex;justify-content:space-between;font-size:14px}
+.hint{font-size:10px;color:var(--muted);margin-top:6px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.stat{border-radius:12px;padding:12px;text-align:center}
+.stat .v{font-size:24px;font-weight:800}.stat .k{font-size:11px;font-weight:500}
+/* timeline */
+.tl{position:relative;padding-left:26px;margin:6px 0 14px}
+.tl::before{content:"";position:absolute;left:8px;top:6px;bottom:6px;width:3px;background:var(--line);border-radius:3px}
+.tl .s{position:relative;margin-bottom:12px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:12.5px}
+.tl .s::before{content:"";position:absolute;left:-24px;top:12px;width:13px;height:13px;border-radius:50%;background:var(--c,var(--yellow));border:2px solid var(--ink)}
+.tl .s b{display:block;font-size:13px}
+.tl .s .amt{float:right;font-weight:700;background:var(--c);border-radius:10px;padding:0 8px}
+.empty-plan{text-align:center;padding:30px;color:var(--muted);font-size:14px}
+footer{text-align:right;font-size:11px;color:var(--muted);margin-top:18px;letter-spacing:.5px}
+@media (max-width:760px){
+ body{padding:10px 6px}.page{padding:18px 14px}
+ .tabs{width:38px}.tabs button{min-height:70px;font-size:10px}.tabs button.active{width:44px}
+ .grid,.grid2,.photos,.photos.two,.stats{grid-template-columns:1fr}
+ .pass{flex-direction:column}.stub{width:auto;border-left:none;border-top:2px dashed var(--ink)}
+ h1{font-size:28px}.cal .c{min-height:48px;font-size:9px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<main class="page">
+
+<nav id="nav">
+  <button data-v="inicio" class="on">inicio</button>
+  <button data-v="calendario">calendario</button>
+  <button data-v="itinerario">itinerario</button>
+  <button data-v="hospedaje">hospedaje</button>
+  <button data-v="presupuesto">presupuesto</button>
+  <button data-v="extras">extras</button>
+</nav>
+
+<header class="top">
+  <h1><span class="hl">trip planner</span> ☁️</h1>
+  <div class="meta"><span class="pill" id="pill"></span> fechas <span class="datebox" id="datebox"></span></div>
+</header>
+
+<div class="pass">
+  <div class="pass-main">
+    <div class="pass-title">✈ BOARDING PASS</div>
+    <div class="route">
+      <div><div class="lbl">FROM</div><div class="big">Home 🏠</div></div>
+      <div class="plane"><svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg></div>
+      <div><div class="lbl">TO</div><div class="big" id="to"></div></div>
+    </div>
+    <div class="pass-row">
+      <div>DATE <b id="pDate"></b></div><div>RETURN <b id="pRet"></b></div>
+      <div>CITIES <b id="pCities"></b></div><div>PLAN <b id="pPlan"></b></div>
+    </div>
+  </div>
+  <div class="stub">
+    <div class="lbl">PASSENGERS</div><div class="names" id="names"></div>
+    <div class="lbl">DAYS TO GO</div>
+    <div class="count"><span id="days">—</span><small>días para despegar</small></div>
+    <div class="barcode"></div>
+  </div>
+</div>
+<div class="strip" id="strip"></div>
+
+<!-- INICIO -->
+<section class="view show" id="v-inicio">
+  <div class="photos">
+    <div class="polaroid" data-key="home1"><div class="ph">+ agregar foto</div><p>dream pic</p></div>
+    <div class="polaroid" data-key="home2"><div class="ph">+ agregar foto</div><p>need to see</p></div>
+    <div class="polaroid" data-key="home3"><div class="ph">+ agregar foto</div><p>#motivation</p></div>
+  </div>
+</section>
+
+<!-- CALENDARIO -->
+<section class="view" id="v-calendario">
+  <h2 class="sec"><span>noviembre 2028</span> 🗓️</h2>
+  <div class="cal" id="cal"></div>
+  <div class="grid2" id="flightInfo"></div>
+</section>
+
+<!-- ITINERARIO -->
+<section class="view" id="v-itinerario">
+  <h2 class="sec"><span>itinerario</span> </h2>
+  <div id="itTable"></div>
+</section>
+
+<!-- HOSPEDAJE -->
+<section class="view" id="v-hospedaje">
+  <h2 class="sec"><span>hospedaje</span> </h2>
+  <div class="grid2">
+    <div class="card y"><h3>🏩 where we are staying</h3><div class="body" id="stayList"></div></div>
+    <div class="card b"><h3>🚃 getting there</h3><div class="body" id="moveList"></div></div>
+  </div>
+  <div id="amenities"></div>
+  <div id="cityPhotos"></div>
+</section>
+
+<!-- PRESUPUESTO -->
+<section class="view" id="v-presupuesto">
+  <h2 class="sec"><span>presupuesto</span> </h2>
+  <div class="stats">
+    <div class="stat" style="background:var(--pink)"><div class="v">$2,225</div><div class="k">por persona</div></div>
+    <div class="stat" style="background:var(--blue)"><div class="v">$1,625</div><div class="k">vuelos + hospedaje</div></div>
+    <div class="stat" style="background:var(--yellow)"><div class="v">$50</div><div class="k">diario × 12 días</div></div>
+  </div>
+  <div class="note" id="budgetNote"></div>
+  <div class="grid2">
+    <div class="card p budget"><h3>💸 budget</h3><div class="body" id="budgetList"></div></div>
+    <div class="card g"><h3>🐇 plan de ahorro</h3><div class="body">
+      <span class="tag" style="background:var(--yellow)">meta 1 · hacer posible el viaje</span>
+      <span class="tag" style="background:var(--pink)">meta 2 · construir la experiencia</span>
+      <p style="margin-top:6px">la idea principal es que durante el primer año todas perseguimos la misma meta: <b>llegar y tener dónde dormir</b>. idealmente, después de este primer año podemos comprar los vuelos, que es lo más importante. después, cada una decide cuánto quiere aportar para comida, actividades, compras y recuerditos. cubierto el ahorro mínimo de $60 usd al mes, quien quiera una experiencia más cómoda puede ahorrar más  sin presiones!</p>
+    </div></div>
+  </div>
+  <h2 class="sec"><span>timeline del ahorro</span> ⏳</h2>
+  <div class="tl">
+    <div class="s" style="--c:var(--lav)"><b>Diciembre 2026</b>Confirmar fechas y cerrar el monto mensual.</div>
+    <div class="s" style="--c:var(--yellow)"><span class="amt">$150/mes</span><b>Enero – Diciembre 2027 · meta 1</b>Ahorro para vuelos (~$1,300) + hospedaje (~$325) = ~$1,625 usd. 11 meses + 1 de colchón por si algún mes no se puede aportar completo.</div>
+    <div class="s" style="--c:var(--blue)"><b>Enero 2028</b>Comprar los vuelos 🎉</div>
+    <div class="s" style="--c:var(--pink)"><span class="amt">$60/mes</span><b>Enero – Octubre 2028 · meta 2</b>~$600 usd para lo básico ($50 al día × 12 días completos) dividido entre 10 meses.</div>
+    <div class="s" style="--c:var(--green)"><b>Mediados de 2028</b>Reservar hospedaje y afinar el itinerario ❣️</div>
+    <div class="s" style="--c:var(--peach)"><b>Noviembre 2028</b>Con un pie en Asia 🧸</div>
+  </div>
+</section>
+
+<!-- EXTRAS -->
+<section class="view" id="v-extras">
+  <h2 class="sec"><span>extras</span> </h2>
+  <div class="grid2">
+    <div class="card b"><h3>🎟 get ahead</h3><div class="body"><ul class="check" data-list="book"></ul></div></div>
+    <div class="card p"><h3>🧸 acuerdos de grupo</h3><div class="body">
+      <p>🐧 todas tenemos ingresos y situaciones distintas, así que el compromiso es con la meta, no con el ritmo de las demás.</p><br>
+      <p>⭐ aporte mínimo mensual acordado, con libertad de ahorrar de más si alguien quiere viajar más cómoda. si un mes no se puede, podemos platicarlo y reorganizarnos. sin pena y sin presiones </p><br>
+      <p>💌 revisión del avance cada tres meses y gastos compartidos anotados en un solo lugar.</p>
+    </div></div>
+  </div>
+  <h2 class="sec"><span>preparaciones</span> </h2>
+  <div class="grid">
+    <div class="card y"><h3>🧥 clima y ropa</h3><div class="body" id="climate"></div></div>
+    <div class="card g"><h3>🛂 documentación</h3><div class="body" id="docs"></div></div>
+    <div class="card b"><h3>📕 pasaporte</h3><div class="body">
+      <b>México:</b><br>3 años · $1,795 mxn<br>6 años · $2,440 mxn<br>10 años · $4,280 mxn<br><br>
+      <b>Colombia:</b><br>Ordinario · ~$190,000 cop (5 años)</div></div>
+    <div class="card p"><h3>📶 internet y electricidad</h3><div class="body">Hay Wi-Fi gratis casi en todos lados, pero lo ideal es una eSIM con datos ilimitados (en Holafly ronda los 50 usd por dos semanas).<br><br> <span id="plug"></span></div></div>
+    <div class="card y"><h3>🧳 equipaje y seguro</h3><div class="body">El vuelo incluye equipaje de mano + dos maletas de 25 kg. Podemos llevar solo una y comprar la segunda allá si hace falta.<br><br> <b>Seguro de viaje:</b> opcional pero muy recomendable, ~100 usd por las dos semanas.</div></div>
+    <div class="card g"><h3>🇨🇴 extensión diana</h3><div class="body">Si Diana quiere pasar unos días en México, podemos agregarlos de vuelta: con la idea vuelo Bogotá – CDMX serían 3 días más, para volver a casa el domingo 26 de noviembre.<br><br>Cada quien cubre su traslado a Bogotá (Diana) o a CDMX (Rosa y Eli).</div></div>
+  </div>
+</section>
+
+<footer id="updated"></footer>
+</main>
+<aside class="tabs" id="tabs"></aside>
+</div>
+<input type="file" id="file" accept="image/*" hidden>
+
+<script>
+/* =========================================================
+   ✏️ EDITA AQUÍ — pasajeras, catálogo por ciudad y propuestas
+   ========================================================= */
+const PASSENGERS = "rosa ✿ diana ✿ eli";
+
+// colores + ideas por ciudad (se usan en todas las propuestas)
+const CITIES = {
+  "Seúl":     {icon:"🌸", flag:"kr", color:"var(--pink)",
+    days:[["myeongdong","📖 beauty clinics 🐻 line friends 🍢 night market"],["gangnam","📚 starfield library 🎵 big hit"],
+          ["jamsil","🎠 lotte world"],["insadong","🏯 gyeongbokgung palace 🏘️ bukchon hanok village"],
+          ["hongdae","🎓 yonsei 🎤 noraebang 🍜 ramyun library"],["seongsu","🌳 seoul forest park"],["itaewon","🗼 n seoul tower"]],
+    see:["Gyeongbokgung Palace","Bukchon Hanok Village","Starfield Library","N Seoul Tower","Lotte World","Seoul Forest Park"],
+    eat:["K-BBQ","Tteokbokki","Night market de Myeongdong","Ramyun library (Hongdae)"]},
+  "Busan":    {icon:"🌊", flag:"kr", color:"var(--blue)",
+    days:[["hwangnyeongsan","🌄 observatory ☕ magnate"],["gamcheon","🎨 gamcheon culture village"],
+          ["haedong","⛩️ yonggungsa temple 🚶 osiria coastal walk"],["haeundae","🚋 blueline park 🌉 gwangalli beach 🌙 night market"]],
+    see:["Gamcheon Culture Village","Haedong Yonggungsa","Blueline Park","Gwangalli Beach"],
+    eat:["Eomuk (fishcake)","Ssiat hotteok","Dwaeji gukbap","Mariscos en Jagalchi"]},
+  "Gangneung":{icon:"🚌", flag:"kr", color:"var(--lav)", days:[["hyangho","🚌 bts bus stop day trip"]], see:["BTS bus stop (Hyangho)"], eat:[]},
+  "Jeju":     {icon:"🍊", flag:"kr", color:"var(--peach)",
+    days:[["seongsan","🌅 seongsan ilchulbong"],["aewol","☕ cafés frente al mar"],["seogwipo","💦 cascadas 🍊 granjas de mandarina"]],
+    see:["Seongsan Ilchulbong","Costa de Aewol","Cascadas de Seogwipo"], eat:["Cerdo negro de Jeju","Todo lo de mandarina 🍊"]},
+  "Tokio":    {icon:"🗼", flag:"jp", color:"var(--yellow)",
+    days:[["shibuya / harajuku","🚦 shibuya crossing 🛍️ takeshita street"],["asakusa","⛩️ sensō-ji 🗼 skytree"],
+          ["shinjuku","🌃 omoide yokocho 🌳 shinjuku gyoen"],["akihabara","🎮 arcades 🍡 ueno"]],
+    see:["Shibuya Crossing","Sensō-ji","Shinjuku de noche","Akihabara"], eat:["Ramen","Sushi","Tamagoyaki","Taiyaki"]},
+  "Kioto":    {icon:"⛩️", flag:"jp", color:"var(--green)",
+    days:[["fushimi","⛩️ fushimi inari"],["arashiyama","🎋 bosque de bambú"],["gion","🏮 gion kiyomizu-dera"]],
+    see:["Fushimi Inari","Arashiyama","Kiyomizu-dera"], eat:["Matcha todo 🍵","Yudofu"]},
+  "Osaka":    {icon:"🏯", flag:"jp", color:"var(--green)",
+    days:[["dōtonbori","🦀 dōtonbori 🌃 namba"],["osaka-jō","🏯 castillo de osaka"],["nara (day trip)","🦌 parque de nara 🏯 todai-ji"]],
+    see:["Dōtonbori","Castillo de Osaka","Day trip a Nara/Kioto"], eat:["Takoyaki","Okonomiyaki","Kushikatsu"]}
+};
+
+/* Cada propuesta: stays = [ciudad, entrada, salida] (días de noviembre 2028).
+   overrides = días específicos dentro de una ciudad (ej. day trips). */
+const PLANS = [
+  { id:"actual", tab:"OPCIÓN A", color:"var(--pink)", pill:"🇰🇷", dep:9, ret:23,
+    stays:[["Seúl",11,17],["Busan",17,21],["Seúl",21,23]], overrides:{15:"Gangneung"},
+    lodging:{"Seúl":"aprox. 200 usd por persona","Busan":"aprox. 125 usd por persona"}, lodgingTotal:"325 usd por persona",
+    moves:[["CDMX → Seúl","✈ Aeromexico"],["Seúl → Busan","🚄 KTX"],["Busan → Seúl","🚄 KTX"],["Seúl → CDMX","✈ Aeromexico"]] },
+  { id:"A", tab:"OPCIÓN B", color:"var(--yellow)", pill:"🇯🇵 🇰🇷", dep:9, ret:23,
+    stays:[["Tokio",11,14],["Osaka",14,17],["Busan",17,20],["Seúl",20,23]],
+    moves:[["CDMX → Tokio","✈ vuelo"],["Tokio → Osaka","🚄 shinkansen"],["Osaka → Busan","✈ vuelo"],["Busan → Seúl","🚄 tren KTX"],["Seúl → CDMX","✈ vuelo"]],
+    pros:"La más equilibrada: 4 ciudades sin cambiar fechas.", cons:"3 traslados en 12 días y Japón queda corto (6 noches). Se recortan Gangneung y Lotte World." },
+  { id:"B", tab:"OPCIÓN C", color:"var(--green)", pill:"🇯🇵 🇰🇷", dep:9, ret:23,
+    stays:[["Tokio",11,14],["Seúl",14,17],["Busan",17,19],["Jeju",19,21],["Seúl",21,23]],
+    moves:[["CDMX → Tokio","✈ vuelo"],["Tokio → Seúl","✈ 2h15–2h40 directo"],["Seúl → Busan","🚄 tren KTX"],["Busan → Jeju","✈ ~1 h"],["Jeju → Seúl","✈ vuelo"],["Seúl → CDMX","✈ vuelo"]],
+    pros:"La más parecida al plan actual: el final en Seúl se queda igual y entra Jeju.", cons:"La más apretada: 4 traslados en 12 días y solo 1 día completo en Tokio." },
+  { id:"C", tab:"OPCIÓN D", color:"var(--blue)", pill:"🇯🇵 🇰🇷", dep:9, ret:30,
+    stays:[["Tokio",11,15],["Kioto",15,18],["Osaka",18,21],["Busan",21,24],["Jeju",24,27],["Seúl",27,30]],
+    moves:[["CDMX → Tokio","✈ vuelo"],["Tokio → Kioto","🚄 shinkansen"],["Kioto → Osaka","🚆 tren"],["Osaka → Busan","✈ vuelo"],["Busan → Jeju","✈ ~1 h"],["Jeju → Seúl","✈ vuelo"],["Seúl → CDMX","✈ vuelo"]],
+    pros:"Todo lo que queremos, con un ritmo más tranquilo.", cons:"Cuesta más y todas necesitamos 3 semanas libres." },
+];
+
+/* ========================================================= */
+const $ = s => document.querySelector(s);
+const store = {
+  get(k,d){ try{ return JSON.parse(localStorage.getItem("trip_"+k)) ?? d }catch(e){ return d } },
+  set(k,v){ try{ localStorage.setItem("trip_"+k, JSON.stringify(v)); localStorage.setItem("trip_edited", Date.now()); renderUpdated(); }
+             catch(e){ alert("Esa foto es muy pesada para guardarse 😅") } }
+};
+const MON = ["ENE","FEB","MAR","ABR","MAY","JUN","JUL","AGO","SEP","OCT","NOV","DIC"];
+let plan = PLANS.find(p => p.id === store.get("plan","actual")) || PLANS[0];
+let view = "inicio";
+
+// --- helpers ---
+function cityOfDay(p, d){
+  if (p.overrides && p.overrides[d]) return p.overrides[d];
+  for (const [c,a,b] of p.stays) if (d >= a && d < b) return c;
+  return null;
+}
+const uniqueCities = p => [...new Set(p.stays.map(s=>s[0]).concat(Object.values(p.overrides||{})))];
+const lines = arr => arr.map(([a,b]) => `<div class="line"><span>${a}</span><span>${b}</span></div>`).join("");
+
+// --- header ---
+function renderHeader(){
+  const has = plan.stays.length > 0;
+  $("#pill").textContent = plan.pill;
+  $("#datebox").textContent = `${plan.dep} – ${plan.ret} nov 2028`;
+  const main = [...new Set(plan.stays.map(s=>s[0]))];
+  $("#to").textContent = has ? (main.length>2 ? `${main[0]} → ${main[main.length-1]}` : main.join(" ⇄ ")) : "¿?";
+  $("#pDate").textContent = `${String(plan.dep).padStart(2,"0")} NOV 28`;
+  $("#pRet").textContent = `${String(plan.ret).padStart(2,"0")} NOV 28`;
+  $("#pCities").textContent = has ? main.length : "–";
+  $("#pPlan").textContent = plan.tab.replace("OPCIÓN ","");
+  $("#names").textContent = PASSENGERS;
+  const diff = Math.ceil((new Date(2028,10,plan.dep) - new Date().setHours(0,0,0,0)) / 864e5);
+  $("#days").textContent = diff > 0 ? diff : (diff === 0 ? "¡HOY! 🎉" : "✈");
+  const strip = [{c:"Salida",i:"🛫",d:`${plan.dep} nov`}]
+    .concat(plan.stays.map(([c,a,b]) => ({c, i:CITIES[c].icon, d:`${a}–${b} nov`})))
+    .concat([{c:"Regreso",i:"🛬",d:`${plan.ret} nov`}]);
+  $("#strip").innerHTML = strip.map(s => `<div class="day"><div class="c">${s.c}</div><div class="i">${s.i}</div><div class="d">${s.d}</div></div>`).join("");
+  $("#tabs").innerHTML = PLANS.map(p => `<button type="button" data-p="${p.id}" class="${p.id===plan.id?"active":""}" style="background:${p.color}">${p.tab}${p.id===plan.id?" ✈":""}</button>`).join("");
+}
+
+// --- calendario ---
+function renderCalendar(){
+  const first = (new Date(2028,10,1).getDay()+6)%7; // lunes = 0
+  let html = ["lun","mar","mié","jue","vie","sáb","dom"].map(d=>`<div class="h">${d}</div>`).join("");
+  for (let i=0;i<first;i++) html += `<div class="c empty"></div>`;
+  for (let d=1; d<=30; d++){
+    let label="", bg="";
+    if (d>=plan.dep && d<=plan.ret){
+      const c = cityOfDay(plan,d);
+      if (c && d!==plan.ret){ label = c.toLowerCase(); bg = CITIES[c].color; }
+      else { label = "día de viaje"; bg = "var(--sand)"; }
+    }
+    html += `<div class="c" style="${bg?`background:${bg}`:""}"><div class="n">${d}</div>${label}</div>`;
+  }
+  $("#cal").innerHTML = html;
+  
+  const firstCity = plan.stays[0]?.[0] || "destino";
+  const outbound = plan.id==="actual"
+    ? `Salida de CDMX el jueves 9 de noviembre. El vuelo dura 19 horas con una escala de una hora en Monterrey. Sumando las 14 horas de diferencia horaria (con un vuelo similar de nov 2026 como modelo), llegamos a Seúl el sábado 11 de noviembre a las 06:10.`
+    : `Salida de CDMX el jueves ${plan.dep} de noviembre con llegada a ${firstCity} el ${plan.stays[0]?.[1] ?? "?"} de noviembre. Horarios exactos por confirmar :-)`;
+  const back = plan.id==="actual"
+    ? `De regreso ganamos la diferencia horaria: salimos de Seúl el jueves 23 de noviembre a las 11:40 y aterrizamos en CDMX el mismo jueves 23 a las 10:35. `
+    : `Salida de Seúl el <b>${plan.ret} de noviembre</b>, aterrizando en CDMX el mismo día gracias a la diferencia horaria. Horarios por confirmar 🔍`;
+  const price = plan.id==="actual" ? `<span class="tag" style="background:var(--pink)">el precio redondo apróximado es de 1,300 usd por persona  </span>` : "";
+  const pc = plan.pros ? `<div class="note" style="grid-column:1/-1">👍 <b>A favor:</b> ${plan.pros}<br>👀 <b>En contra:</b> ${plan.cons}</div>` : "";
+  $("#flightInfo").innerHTML = plan.stays.length ? `
+    <div class="card y"><h3>🛫 ida</h3><div class="body">${outbound}</div></div>
+    <div class="card b"><h3>🛬 regreso</h3><div class="body">${back}<br><br>${price}</div></div>${pc}`
+    : `<div class="empty-plan" style="grid-column:1/-1">✏️ Esta propuesta todavía está por definir</div>`;
+}
+
+// --- itinerario ---
+function renderItinerary(){
+  if (!plan.stays.length){ $("#itTable").innerHTML = `<div class="empty-plan">✏️ Itinerario por definir</div>`; }
+  else {
+    const used = {}; let rows = "";
+    for (let d=plan.stays[0][1]; d<plan.ret; d++){
+      const c = cityOfDay(plan,d); if(!c) continue;
+      const pool = CITIES[c].days; const k = used[c]||0; used[c] = k+1;
+      const [zona, ideas] = pool[k] || ["libre","💭 por armar juntas"];
+      rows += `<tr><td>${d} nov</td><td>${c.toLowerCase()}</td><td>${zona}</td><td>${ideas}</td></tr>`;
+    }
+    $("#itTable").innerHTML = `<div class="note">sugerencia de distribución de días, el itinerario específico lo armamos juntas &lt;3</div>
+      <table class="it"><tr><th>fecha</th><th>ciudad</th><th>zona</th><th>ideas</th></tr>${rows}</table>`;
+  }
+}
+
+// --- hospedaje ---
+function renderLodging(){
+  const main = [...new Set(plan.stays.map(s=>s[0]))];
+  $("#stayList").innerHTML = main.length ? lines(main.map(c => {
+    const ranges = plan.stays.filter(s=>s[0]===c).map(s=>`${s[1]}–${s[2]}`).join(" y ");
+    const nights = plan.stays.filter(s=>s[0]===c).reduce((n,s)=>n+s[2]-s[1],0);
+    return [`${CITIES[c].icon} ${c} · ${ranges} nov`, plan.lodging?.[c] || `${nights} noches · por definir`];
+  })) : `<div class="empty-plan">por definir</div>`;
+  $("#moveList").innerHTML = plan.moves.length ? lines(plan.moves) : `<div class="empty-plan">por definir</div>`;
+  $("#amenities").innerHTML = plan.lodgingTotal ? `<div class="note"><b>Amenidades:</b>
+    <span class="tag">🛏️ 2 habitaciones</span><span class="tag">👑 3 camas queen</span><span class="tag">🧺 lavadora/secadora</span>
+    <span class="tag">❄️ aire acondicionado</span><span class="tag">🚇 cerca del metro</span><br>
+    <b>Total aproximado: ${plan.lodgingTotal}</b></div>` : "";
+  $("#cityPhotos").innerHTML = main.map(c => `<div class="cityblock"><h4>${CITIES[c].icon} ${c}</h4>
+    <div class="photos two">
+      <div class="polaroid" data-key="${c}-mapa"><div class="ph">+ mapa</div><p>mapa</p></div>
+      <div class="polaroid" data-key="${c}-lugar"><div class="ph">+ foto del lugar</div><p>sleeping zZz here</p></div>
+    </div></div>`).join("");
+  loadPhotos();
+}
+
+// --- presupuesto ---
+function renderBudget(){
+  const defs = [["Vuelos","var(--pink)",1300],["Hospedaje","var(--green)",325],["Comida y transporte","var(--blue)",600],["Compras y extras","var(--yellow)",""]];
+  const saved = store.get("budget_"+plan.id, null);
+  $("#budgetList").innerHTML = defs.map(([n,c,v],i) => `<div class="row"><span class="dot" style="background:${c}"></span>${n}
+    <input type="number" min="0" data-i="${i}" placeholder="$0" value="${saved ? (saved[i]??"") : (plan.id==="actual"?v:"")}"></div>`).join("")
+    + `<div class="total"><span>Total</span><span id="total">$0</span></div>`;
+  $("#budgetNote").innerHTML = `El presupuesto que propongo es de <b>2,225 usd</b> por persona para cubrir vuelos, hospedaje, comida y transporte local.
+    Se divide en <b>1,625 usd</b> para vuelos y hospedaje + un presupuesto diario de <b>50 usd</b> por 12 días completos. Esto cubre lo básico; para actividades y compras será lo que cada quien quiera ahorrar como extra. `
+    + (plan.id!=="actual" ? `<br><br>⚠️ Estos números son del plan actual (solo Corea). Para ${plan.tab.toLowerCase()} hay que recalcular.` : "");
+  calcTotal(false);
+}
+function calcTotal(save=true){
+  let t=0, s={};
+  document.querySelectorAll("#budgetList input").forEach(inp => { const v=Math.max(0,parseFloat(inp.value)||0); t+=v; s[inp.dataset.i]=inp.value; });
+  $("#total").textContent = "$" + t.toLocaleString("en-US");
+  if (save) store.set("budget_"+plan.id, s);
+}
+$("#budgetList").addEventListener("input", () => calcTotal(true));
+
+// --- extras ---
+function renderExtras(){
+  const jp = plan.stays.some(s => CITIES[s[0]].flag==="jp");
+  const book = [];
+  if (jp) book.push(["Visa de Japón para Diana","🇯🇵"]);
+  book.push(["Pre-registro de Diana para México",""],["Pasaportes vigentes",""],["eSIM",""],["Adaptador de enchufe",""],["Seguro de viaje",""]);
+  plan.moves.slice(1,-1).forEach(([r,t]) => book.push([r, t.split(" ")[0]]));
+  fillCheck("book", book);
+  const hasJeju = plan.stays.some(s=>s[0]==="Jeju");
+  $("#climate").innerHTML = `Seúl en noviembre: 0 °C a 15 °C. Busan es más cálida: 6 °C a 19 °C 🥶` + (jp||hasJeju ? `<br><small>(${[jp?"Japón":"",hasJeju?"Jeju":""].filter(Boolean).join(" y ")}: por revisar)</small>` : "")
+    + `<br><br>Ropa en capas, abrigo, bufanda y zapatos cómodos. Propuesta: llevar ropa para una semana y lavar allá`;
+  $("#docs").innerHTML = `Para que Diana entre a México: los colombianos no necesitan visa, pero sí un pre-registro electrónico cuando ya estén comprados los vuelos. Piden pasaporte con 6 meses de vigencia, boleto de regreso, reserva de hospedaje e itinerario, y a veces comprobante de solvencia.`
+    + (jp ? `<br><br>🇯🇵 <b>Diana necesitaría visa para Japón</b>; Rosa y Eli no.` : "");
+  $("#plug").innerHTML = `En Corea se usa enchufe redondo tipo C/F` + (jp ? ` y en Japón tipo A` : "") + `. Hay que llevar adaptador :)`;
+}
+
+// --- checklists (guardadas por propuesta) ---
+function fillCheck(key, items){
+  const ul = document.querySelector(`ul[data-list="${key}"]`);
+  const done = store.get(`chk_${plan.id}_${key}`, []);
+  ul.innerHTML = items.length ? items.map(([t,c]) => `<li data-t="${t}" class="${done.includes(t)?"done":""}">${t}${c?`<small>${c}</small>`:""}</li>`).join("")
+                              : `<li style="cursor:default">por definir ✏️</li>`;
+  ul.onclick = e => { const li=e.target.closest("li[data-t]"); if(!li) return; li.classList.toggle("done");
+    store.set(`chk_${plan.id}_${key}`, [...ul.querySelectorAll("li.done")].map(x=>x.dataset.t)); };
+}
+
+// --- fotos (se guardan en tu navegador) ---
+let current = null;
+function loadPhotos(){
+  document.querySelectorAll(".polaroid").forEach(p => {
+    const img = store.get("img_"+p.dataset.key, null);
+    if (img) p.querySelector(".ph").innerHTML = `<img src="${img}" alt="">`;
+    p.onclick = () => { current = p; $("#file").click(); };
+  });
+}
+$("#file").addEventListener("change", e => {
+  const f = e.target.files[0]; if (!f || !current) return;
+  const r = new FileReader();
+  r.onload = () => { const im = new Image(); im.onload = () => {
+    const c = document.createElement("canvas"), s = Math.min(1, 700/im.width);
+    c.width = im.width*s; c.height = im.height*s; c.getContext("2d").drawImage(im,0,0,c.width,c.height);
+    const url = c.toDataURL("image/jpeg",.8);
+    current.querySelector(".ph").innerHTML = `<img src="${url}" alt="">`; store.set("img_"+current.dataset.key, url);
+  }; im.src = r.result; };
+  r.readAsDataURL(f); e.target.value = "";
+});
+
+// --- last updated ---
+function renderUpdated(){
+  const t = Math.max(new Date(document.lastModified).getTime() || 0, +localStorage.getItem("trip_edited") || 0);
+  const d = new Date(t);
+  $("#updated").textContent = "last updated: " + d.toLocaleDateString("es-MX",{day:"numeric",month:"short",year:"numeric"}) + " · " + d.toLocaleTimeString("es-MX",{hour:"2-digit",minute:"2-digit"});
+}
+
+// --- navegación ---
+function renderAll(){ renderHeader(); renderCalendar(); renderItinerary(); renderLodging(); renderBudget(); renderExtras(); loadPhotos(); renderUpdated(); }
+$("#nav").addEventListener("click", e => {
+  const b = e.target.closest("button"); if(!b) return;
+  view = b.dataset.v;
+  document.querySelectorAll("#nav button").forEach(x => x.classList.toggle("on", x===b));
+  document.querySelectorAll("section.view").forEach(s => s.classList.toggle("show", s.id==="v-"+view));
+});
+$("#tabs").addEventListener("click", e => {
+  const b = e.target.closest("button"); if(!b) return;
+  plan = PLANS.find(p => p.id===b.dataset.p); localStorage.setItem("trip_plan", JSON.stringify(plan.id)); renderAll();
+});
+renderAll();
+</script>
+</body>
+</html>

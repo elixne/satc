@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trip Planner · 2028</title>
+<title>satc takes asia '28</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⭐</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#ebe7e0;--paper:#f5f2ea;--card:#fdfbf6;--ink:#1d1d1d;--muted:#6f6a60;--line:#d9d4c7;
@@ -99,6 +100,7 @@ ul.check li.done::before{background:var(--ink);box-shadow:inset 0 0 0 2px var(--
 ul.check li small{margin-left:auto;font-size:10px;color:var(--muted)}
 /* budget */
 .budget .row{display:flex;align-items:center;gap:8px;font-size:13px;padding:6px 0}
+.budget .val{margin-left:auto;font-weight:600}
 .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
 .budget input{margin-left:auto;width:90px;border:none;border-bottom:1px solid var(--ink);background:transparent;font:inherit;text-align:right;padding:2px}
 .budget input:focus{outline:none;border-color:#c77fa3}
@@ -123,63 +125,90 @@ footer{text-align:right;font-size:11px;color:var(--muted);margin-top:18px;letter
  .pass{flex-direction:column}.stub{width:auto;border-left:none;border-top:2px dashed var(--ink)}
  h1{font-size:28px}.cal .c{min-height:48px;font-size:9px}
 }
-/* 📱 Optimización para celular */
+/* 📱 Celular: igual que escritorio, pero en miniatura */
 @media (max-width:760px){
-  body{padding:0}
-  .wrap{flex-direction:column-reverse;box-shadow:none}
-  .page{padding:16px 14px 20px;border:none}
+  html{-webkit-text-size-adjust:100%}
+  html,body{overflow-x:hidden}
+  body{padding:6px 4px}
+  .wrap{flex-direction:row;box-shadow:0 6px 18px rgba(0,0,0,.08);min-width:0;max-width:100%}
+  .page{padding:12px 10px 14px;border:1px solid var(--line);min-width:0;max-width:100%}
 
-  /* tabs de propuestas: arriba y horizontales */
-  .tabs{flex-direction:row;width:100%;overflow-x:auto;scrollbar-width:none}
-  .tabs button{writing-mode:horizontal-tb;transform:none;min-height:0;flex:1 0 auto;padding:10px 14px;font-size:11px;
-    border-bottom:none;border-right:1px solid rgba(0,0,0,.08);white-space:nowrap}
-  .tabs button.active{width:auto;box-shadow:inset 0 -3px 0 var(--ink)}
+  /* tabs de propuestas: a la derecha y verticales */
+  .tabs{display:flex;flex-direction:column;width:26px;overflow:visible}
+  .tabs button{writing-mode:vertical-rl;transform:rotate(180deg);flex:1;min-height:60px;padding:0;
+    font-size:8px;letter-spacing:1px;white-space:nowrap;border-right:none;border-bottom:1px solid rgba(0,0,0,.08)}
+  .tabs button.active{width:30px;box-shadow:-2px 0 5px rgba(0,0,0,.15)}
 
-  /* botones de páginas: en una fila que se desliza y se queda pegada arriba */
-  nav{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;position:sticky;top:0;z-index:5;
-    background:var(--paper);margin:0 -14px 14px;padding:8px 14px}
-  nav button{flex-shrink:0}
-  nav::-webkit-scrollbar,.tabs::-webkit-scrollbar{display:none}
+  /* botones de páginas */
+  nav{gap:4px;margin-bottom:12px}
+  nav button{font-size:10px;padding:3px 9px}
 
-  /* encabezado y boarding pass */
-  h1{font-size:26px}
-  .meta{font-size:12px;gap:6px}
-  .pass{flex-direction:column}
-  .stub{width:auto;border-left:none;border-top:2px dashed var(--ink)}
-  .big{font-size:16px}
-  .plane svg{width:30px;height:30px}
-  .pass-row{gap:10px}
-  .strip{grid-template-columns:repeat(3,1fr)}
+  /* encabezado */
+  header.top{gap:6px;margin-bottom:10px}
+  h1{font-size:22px;gap:6px}
+  .meta{font-size:10px;gap:5px}
+  .pill,.datebox{padding:3px 10px}
 
-  /* tarjetas y fotos */
-  .grid,.grid2,.stats{grid-template-columns:1fr}
-  .photos,.photos.two{grid-template-columns:repeat(2,1fr);gap:12px;margin:4px 0 12px}
-  .photos .polaroid:last-child:nth-child(odd){grid-column:1/-1;width:60%;justify-self:center}
-  .polaroid p{font-size:11px}
+  /* boarding pass con el talón a la derecha */
+  .pass{flex-direction:row;border-radius:10px;margin-bottom:10px}
+  .pass-main{padding:10px}
+  .pass-title{font-size:9px;margin-bottom:8px;letter-spacing:1.5px}
+  .route{gap:4px;margin-bottom:8px}
+  .lbl{font-size:7px}
+  .big{font-size:12px}
+  .plane svg{width:20px;height:20px}
+  .pass-row{gap:4px 8px;font-size:7.5px}
+  .pass-row b{padding:0 4px;margin-left:2px}
+  .stub{width:34%;border-left:2px dashed var(--ink);border-top:none;padding:8px;gap:3px}
+  .stub .names{font-size:9px}
+  .count{font-size:15px;padding:3px}
+  .count small{font-size:7px}
+  .barcode{height:18px}
 
-  /* calendario más compacto */
+  /* ruta en una sola fila */
+  .strip{display:flex;gap:4px;margin-bottom:12px}
+  .day{flex:1;min-width:0;padding:5px 2px;border-radius:7px}
+  .day .c{font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .day .i{font-size:15px;margin:1px 0}
+  .day .d{font-size:7.5px}
+
+  /* fotos */
+  .photos{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:2px 4px 10px}
+  .photos.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .polaroid{padding:4px 4px 6px}
+  .polaroid p{font-size:8.5px;margin-top:3px}
+  .ph{font-size:8px}
+
+  /* tarjetas */
+  h2.sec{font-size:15px;margin-bottom:8px}
+  .grid,.grid2{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:8px}
+  .stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  .stat{padding:8px 4px}.stat .v{font-size:16px}.stat .k{font-size:8px}
+  .card{border-radius:9px}
+  .card h3{font-size:11px;padding:6px 8px}
+  .card .body{font-size:10px;padding:6px 8px 8px;overflow-wrap:anywhere}
+  .line,.budget .row,ul.check li{font-size:10px;padding:5px 0}
+  .line{overflow-wrap:anywhere}
+  .line.three{grid-template-columns:minmax(0,1fr) auto 44px;gap:5px}
+  .note{font-size:10.5px;padding:10px;overflow-wrap:anywhere}
+  .tag{font-size:9px}
+
+  /* calendario */
   .cal{gap:3px}
-  .cal .c{min-height:44px;padding:3px;font-size:8px;line-height:1.2;word-break:break-word;border-radius:6px}
-  .cal .c .n{font-size:12px}
+  .cal .h{font-size:8px}
+  .cal .c{min-height:40px;padding:3px;font-size:7px;line-height:1.2;border-radius:5px;word-break:break-word}
+  .cal .c .n{font-size:11px}
 
-  /* itinerario: la tabla se vuelve tarjetitas */
-  table.it,.it tbody,.it tr,.it td{display:block;width:100%}
-  table.it{border:none;background:transparent}
-  .it tr:first-child{display:none}
-  .it tr{background:var(--card);border:1.5px solid var(--pink);border-radius:10px;margin-bottom:8px;padding:8px 10px}
-  .it td{border:none;padding:2px 0}
-  .it td:first-child{display:inline-block;width:auto;background:var(--pink);border-radius:8px;padding:0 8px;margin-right:6px}
-  .it td:nth-child(2){display:inline-block;width:auto;font-weight:600}
-  .it td:nth-child(3){color:var(--muted);font-size:11.5px}
+  /* itinerario y timeline */
+  table.it{font-size:9.5px}
+  .it th,.it td{padding:4px 5px}
+  .it td:first-child{white-space:normal}
+  .tl{padding-left:20px}.tl::before{left:5px}
+  .tl .s{font-size:10.5px;padding:7px 9px;overflow-wrap:anywhere}.tl .s b{font-size:11px}
+  .tl .s::before{left:-20px;width:10px;height:10px}
 
-  /* timeline y footer */
-  .tl .s .amt{float:none;display:inline-block;margin-bottom:4px}
-  footer{text-align:center}
+  footer{font-size:9px;text-align:right}
 }
-.line.three{display:grid;grid-template-columns:1fr auto 64px;gap:8px}
-.line.three span:nth-child(2){color:var(--muted)}
-.line.three span:last-child{color:var(--ink);font-weight:600}
-.budget .val{margin-left:auto;font-weight:600}
 </style>
 </head>
 <body>
@@ -275,7 +304,7 @@ footer{text-align:right;font-size:11px;color:var(--muted);margin-top:18px;letter
   <h2 class="sec"><span>timeline del ahorro</span> ⏳</h2>
   <div class="tl">
     <div class="s" style="--c:var(--lav)"><b>Diciembre 2026</b>Confirmar fechas y cerrar el monto mensual.</div>
-    <div class="s" style="--c:var(--yellow)"><span class="amt"><span data-b="m1"></span> usd por mes</span><b>Enero – Diciembre 2027 · meta 1</b>Ahorro para vuelos (~<span data-b="vuelos"></span>) + hospedaje (~<span data-b="hosp"></span>) = ~<span data-b="vh"></span> usd. 11 meses + 1 de colchón por si algún mes no se puede aportar completo.</div>
+    <div class="s" style="--c:var(--yellow)"><span class="amt"><span data-b="m1"></span> usd por mes</span><b>Enero – Diciembre 2027 · meta 1</b>Ahorro para vuelos (~<span data-b="vuelos"></span>) + hospedaje (~<span data-b="hosp"></span>) + trenes (~<span data-b="trenes"></span>) = ~<span data-b="vh"></span> usd. 11 meses + 1 de colchón por si algún mes no se puede aportar completo.</div>
     <div class="s" style="--c:var(--blue)"><b>Enero 2028</b>Comprar los vuelos y reservar el hospedaje 🎉</div>
     <div class="s" style="--c:var(--pink)"><span class="amt"><span data-b="m2"></span> usd por mes</span><b>Enero – Octubre 2028 · meta 2</b>~<span data-b="comida"></span> para lo básico (<span data-b="diario"></span> al día × <span data-b="dias"></span> días completos) dividido entre 10 meses.</div>
     <div class="s" style="--c:var(--green)"><b>Mediados de 2028</b>Afinar el itinerario y agendar atracciones ❣️</div>
@@ -303,7 +332,7 @@ footer{text-align:right;font-size:11px;color:var(--muted);margin-top:18px;letter
       <b>Colombia:</b><br>Ordinario · ~$190,000 cop (5 años)</div></div>
     <div class="card p"><h3>📶 internet y electricidad</h3><div class="body">Hay Wi-Fi gratis casi en todos lados, pero lo ideal es una eSIM con datos ilimitados (en Holafly ronda los 50 usd por dos semanas).<br><br> <span id="plug"></span></div></div>
     <div class="card y"><h3>🧳 equipaje y seguro</h3><div class="body">El vuelo incluye equipaje de mano + dos maletas de 25 kg. Podemos llevar solo una y comprar la segunda allá si hace falta.<br><br> <b>Seguro de viaje:</b> opcional pero muy recomendable, ~100 usd por las dos semanas.</div></div>
-    <div class="card g"><h3>🇨🇴 extensión diana</h3><div class="body">Si Diana quiere pasar unos días en México, podemos agregarlos de vuelta: con la idea vuelo Bogotá – CDMX serían 3 días más, para volver a casa el domingo 26 de noviembre.<br><br>Cada quien cubre su traslado a Bogotá (Diana) o a CDMX (Rosa y Eli).</div></div>
+    <div class="card g"><h3>🎈 adicionales</h3><div class="body">si se me ocurre algo mas lo agregare aqui :P
   </div>
 </section>
 
@@ -369,13 +398,13 @@ const PLANS = [
     stays:[["Seúl",18,24],["Busan",24,28],["Seúl",28,30]], overrides:{22:"Gangneung"},
     lodging:{"Seúl":"aprox. 200 usd por persona","Busan":"aprox. 125 usd por persona"},
     lodgingCons:{"Seúl":[], "Busan":[]},
-    budget:[1300, 325, 600, 0],
+    budget:[1300, 325, 80, 600],
     moves:[["Seúl → Busan","🚄 ktx",40],["Busan → Seúl","🚄 ktx",40]],
     pros:"nuestra opción original. como solamente es corea, no estamos tan presionadas en tiempos ni en translados. la opción más económica.", cons:"no visitamos japon T_T" },
   { id:"A", tab:"OPCIÓN B", color:"var(--yellow)", pill:"🇯🇵 🇰🇷", dep:16, ret:30,
     stays:[["Seúl",18,22],["Busan",22,24],["Osaka",24,26],["Tokio",26,30]], overrides:{20:"Gangneung"}, 
     lodging:{"Seúl":"aprox. 100 usd por persona","Busan":"aprox. 45 usd por persona","Osaka":"aprox. 60 usd por persona","Tokio":"aprox. 135 usd por persona"},
-    budget:[1570, 340, 600, 0],
+    budget:[1300, 340, 270, 600],
     moves:[["Seúl → Busan","🚄 ktx",40],["Busan → Osaka","✈ vuelo",60],["Osaka → Tokio","🚄 shinkansen",85],["Tokio → Seúl","✈ vuelo",85]],
     ida:`Salida de CDMX el <b>jueves 16 de noviembre</b>. El vuelo dura 19 horas con una escala de una hora en Monterrey. Sumando las 14 horas de diferencia horaria, llegamos a Seúl el <b>sábado 18 por la mañana</b>.`,
     vuelta:`De regreso ganamos la diferencia horaria: salimos de Seúl el <b>jueves 30 de noviembre a las 11:40</b> y aterrizamos en CDMX el mismo <b>jueves 23 a las 10:35</b>. Es como viajar de vuelta por el tiempo 😄`,
@@ -514,7 +543,7 @@ function renderLodging(){
 
 // --- presupuesto ---
 function renderBudget(){
-  const defs = [["Vuelos","var(--pink)",1300],["Hospedaje","var(--green)",325],["Comida y transporte","var(--blue)",600],["Compras y extras","var(--yellow)",""]];
+  const defs = [["Vuelos","var(--pink)",1300],["Hospedaje","var(--green)",325],["Trenes","var(--blue)",600],["Comidas y transporte","var(--yellow)",""]];
   const vals = plan.budget || [];
   const money = n => "$" + n.toLocaleString("en-US");
   const total = vals.reduce((t,v) => t + (+v || 0), 0);
@@ -524,13 +553,13 @@ function renderBudget(){
   const m = n => n ? money(n) : "–";
   const up10 = n => Math.ceil(n/10)*10;
   const dias = plan.stays.length ? plan.ret - plan.stays[0][1] : 0;
-  const vh = (+vals[0]||0) + (+vals[1]||0);
-  const comida = +vals[2] || 0;
-  const B = { total:m(total), vuelos:m(+vals[0]||0), hosp:m(+vals[1]||0), vh:m(vh), comida:m(comida),
+  const vh = (+vals[0]||0) + (+vals[1]||0) + (+vals[2]||0);
+  const comida = +vals[3] || 0;
+  const B = { total:m(total), vuelos:m(+vals[0]||0), hosp:m(+vals[1]||0), trenes:m(+vals[2]||0), vh:m(vh), comida:m(comida),
     diario: dias ? m(Math.round(comida/dias)) : "–", dias: dias || "–",
     m1: m(up10(vh/11)), m2: m(up10(comida/10)) };
   document.querySelectorAll("[data-b]").forEach(el => el.textContent = B[el.dataset.b] ?? "–");
-  $("#budgetNote").innerHTML = `El presupuesto que propongo es de <b>${B.total} usd</b> por persona para cubrir vuelos, hospedaje, comida y transporte local. Se divide en <b>${B.vh} usd</b> para vuelos y hospedaje + un presupuesto diario de <b>${B.diario} usd</b> por ${B.dias} días completos. Esto cubre lo básico; para actividades y compras será lo que cada quien quiera ahorrar como extra. ✨`;
+  $("#budgetNote").innerHTML = `El presupuesto que propongo es de <b>${B.total} usd</b> por persona para cubrir vuelos, hospedaje, comida y transporte local. Se divide en <b>${B.vh} usd</b> para vuelos y hospedaje + un presupuesto diario de <b>${B.diario} usd</b> por ${B.dias} días completos. Esto cubre lo básico; para actividades y compras será lo que cada quien quiera ahorrar como extra 😄`;
 }
 function calcTotal(save=true){
   let t=0, s={};
